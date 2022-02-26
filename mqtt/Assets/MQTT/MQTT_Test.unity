@@ -441,12 +441,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9afb01b12b13b94098c85595647dc68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clientId: VSL_project
   brokerHostname: io.adafruit.com
   brokerPort: 8883
   userName: GGrothaus
   password: aio_agXY868UMeWOnaYR4szgcTlAqY6h
   certificate: {fileID: 4900000, guid: af650fb5a8e039a46b38520f6d72b92f, type: 3}
-  fData: 0
+  subscriptions: []
 --- !u!4 &1277594899
 Transform:
   m_ObjectHideFlags: 0
@@ -491,12 +492,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9afb01b12b13b94098c85595647dc68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clientId: VSL_project
   brokerHostname: poetryai.cloud.shiftr.io
   brokerPort: 8883
   userName: poetryai
   password: 605k8jiP5ZQXyMEJ
   certificate: {fileID: 4900000, guid: af650fb5a8e039a46b38520f6d72b92f, type: 3}
-  fData: 0
+  subscriptions:
+  - topic: Wind
+    subscribers:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 348017581}
+          m_TargetAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_MethodName: set_name
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!4 &1596810440
 Transform:
   m_ObjectHideFlags: 0
