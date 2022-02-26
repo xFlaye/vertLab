@@ -446,7 +446,7 @@ MonoBehaviour:
   userName: GGrothaus
   password: aio_agXY868UMeWOnaYR4szgcTlAqY6h
   certificate: {fileID: 4900000, guid: af650fb5a8e039a46b38520f6d72b92f, type: 3}
-  myMsg: 0
+  fData: 0
 --- !u!4 &1277594899
 Transform:
   m_ObjectHideFlags: 0
@@ -496,7 +496,7 @@ MonoBehaviour:
   userName: poetryai
   password: 605k8jiP5ZQXyMEJ
   certificate: {fileID: 4900000, guid: af650fb5a8e039a46b38520f6d72b92f, type: 3}
-  myMsg: 0
+  fData: 0
 --- !u!4 &1596810440
 Transform:
   m_ObjectHideFlags: 0

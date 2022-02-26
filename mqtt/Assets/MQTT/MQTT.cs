@@ -24,7 +24,7 @@ public class MQTT : MonoBehaviour
     static string subTopic = "#";
 
 	//! data out
-	public float myMsg;
+	public float fData;
 
     void Start()
 	{
@@ -69,11 +69,11 @@ public class MQTT : MonoBehaviour
         Debug.Log ("Received message from " + e.Topic + " : " + msg);
 
 		//! convert msg string to float
-		float fData = float.Parse(msg);
+		fData = float.Parse(msg);
 		
 
 		Debug.Log("float value: "+ fData);
-		myMsg = fData;
+		
 		
 	}
 
