@@ -1,5 +1,3 @@
-
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,10 +7,18 @@ using System.Net.Security;
 using uPLibrary.Networking.M2Mqtt.Messages;
 using System.Security.Cryptography.X509Certificates;
 using System;
+//! IMPORTANT ELEMENTS TO ADD TO MAKE THIS WORK
+using UnityEngine.Events; // using unity events
+using System.Collections.Concurrent; // for concurrent queue
 
 public class MQTT : MonoBehaviour
 {
-    //http://tdoc.info/blog/2014/11/10/mqtt_csharp.html
+    public string clientId = "VSL_project";
+
+	//! data out
+	// public float myMsg;
+	
+	//http://tdoc.info/blog/2014/11/10/mqtt_csharp.html
     private MqttClient client;
     // The connection information
     public string brokerHostname = "ec2-11-111-11.us-west-2.compute.amazonaws.com";
@@ -22,10 +28,18 @@ public class MQTT : MonoBehaviour
     public TextAsset certificate;
     // listen on all the Topic
     static string subTopic = "#";
+	//! IMPORTANT 
+	[System.Serializable]
+	public struct Subscription 
+	{
+		public string topic;
+		public UnityEvent<string> subscribers;
+	}
 
-	//! data out
-	public float myMsg;
+	public Subscription[] subscriptions;
 
+	ConcurrentQueue<(string,string)> queue = new ConcurrentQueue<(string, string)>(); //! read up on this
+	
     void Start()
 	{
 		if (brokerHostname != null && userName != null && password != null)
@@ -46,7 +60,8 @@ public class MQTT : MonoBehaviour
 		//cert.Import(certificate.bytes);
 		Debug.Log("Using the certificate '" + cert + "'");
 		client = new MqttClient(brokerHostname, brokerPort, true, null/*cert*/, null, MqttSslProtocols.TLSv1_0, MyRemoteCertificateValidationCallback);
-		string clientId = Guid.NewGuid().ToString();
+		// string clientId = Guid.NewGuid().ToString();
+		clientId+= UnityEngine.Random.Range(0,1000);
 		Debug.Log("About to connect using '" + userName + "' / '" + password + "'");
 		try
 		{
@@ -68,17 +83,33 @@ public class MQTT : MonoBehaviour
 		string msg = System.Text.Encoding.UTF8.GetString(e.Message);
         Debug.Log ("Received message from " + e.Topic + " : " + msg);
 
+		queue.Enqueue((e.Topic, msg));
+
+		
 		//! convert msg string to float
-		float fData = float.Parse(msg);
+		// float fData = float.Parse(msg);
 		
+		// Debug.Log("float value: "+ fData);
+		// myMsg = fData;
 
-		Debug.Log("float value: "+ fData);
-		myMsg = fData;
-		
 	}
-
-
-
+	//! IMPORTANT
+	void Update()
+	{
+		while (queue.TryDequeue(out var item))
+		{
+			string topic = item.Item1;
+			string msg = item.Item2;
+			foreach (var subscription in subscriptions)
+			{
+				if(subscription.topic == topic && subscription.subscribers != null)
+				{
+					subscription.subscribers.Invoke(msg);
+					break;
+				}
+			}
+		}
+	}
     private void Publish(string _topic, string msg)
 	{
 		client.Publish(
@@ -90,4 +121,6 @@ public class MQTT : MonoBehaviour
         client.Disconnect();
     }
 }
+
+
 
