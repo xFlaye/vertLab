@@ -14,6 +14,8 @@ using System.Collections.Concurrent; // for concurrent queue
 public class MQTT : MonoBehaviour
 {
     public string clientId = "VSL_project";
+
+	
 	
 	//http://tdoc.info/blog/2014/11/10/mqtt_csharp.html
     private MqttClient client;
@@ -25,6 +27,10 @@ public class MQTT : MonoBehaviour
     public TextAsset certificate;
     // listen on all the Topic
     static string subTopic = "#";
+	
+	//! data out
+	//public float myMsg;
+	
 	//! IMPORTANT 
 	[System.Serializable]
 	public struct Subscription 
@@ -33,8 +39,7 @@ public class MQTT : MonoBehaviour
 		public UnityEvent<string> subscribers;
 	}
 
-	//! data out
-	// public float fData;
+	public Subscription[] subscriptions;
 
 	ConcurrentQueue<(string,string)> queue = new ConcurrentQueue<(string, string)>(); //! read up on this
 	
@@ -82,17 +87,17 @@ public class MQTT : MonoBehaviour
         Debug.Log ("Received message from " + e.Topic + " : " + msg);
 
 		queue.Enqueue((e.Topic, msg));
-
 		
+		/*
 		//! convert msg string to float
-		//fData = float.Parse(msg);
+		float fData = float.Parse(msg);
 		
-		// Debug.Log("float value: "+ fData);
-		// myMsg = fData;
 
-		//Debug.Log("float value: "+ fData);
+		Debug.Log("float value: "+ fData);
+		myMsg = fData;
+		*/
 		
-		
+
 	}
 	//! IMPORTANT
 	void Update()
@@ -122,6 +127,4 @@ public class MQTT : MonoBehaviour
         client.Disconnect();
     }
 }
-
-
 
