@@ -95,12 +95,12 @@ public static class FunctionLibrary
     }
     public static Vector3 RippleChaos (float u, float v, float t)
     {
-        float d = Abs(x);
+        float d = Abs(u);
         Vector3 p;
         p.x = u;
         p.y = Sin(PI * (4f * d - t));
         p.y /= (1f + Cos(10f * d)); // use a fixed amplitude (10)
-        p.z = z;
+        p.z = v;
         return p;
     } 
 
