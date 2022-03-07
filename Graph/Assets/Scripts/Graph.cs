@@ -19,7 +19,7 @@ public class Graph : MonoBehaviour
     Transform[] points;
     
     // public int power = 2;
-    [SerializeField, Range(1,5)]
+    [SerializeField, Range(1,100)]
     int divider = 2;
     [SerializeField, Range(1,100)]
     float stepAmount = 1f;
@@ -38,9 +38,10 @@ public class Graph : MonoBehaviour
         FunctionLibrary.Function f = FunctionLibrary.GetFunction(function);
         float time = Time.time;
         float step = stepAmount / resolution;
-        int depthRest = resolution/divider;
+        int depthRest = resolution / divider;
 
-        float v = 0.5f * step - 1f;
+        // float v = 0.5f * step - 1f;
+        float v = 0.1f * step - 1f;
     
         for (int i = 0, x = 0, z = 0; i < points.Length; i++, x++) 
         {
