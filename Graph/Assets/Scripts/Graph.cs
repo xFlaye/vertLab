@@ -8,7 +8,7 @@ public class Graph : MonoBehaviour
     Transform pointPrefab;
 
     [SerializeField, Range(10,100)]
-    int resolution = 10;
+    int resolution = 30;
 
     //[SerializeField, Range(0,3)]
     //int function;
@@ -20,9 +20,10 @@ public class Graph : MonoBehaviour
     
     // public int power = 2;
     [SerializeField, Range(1,100)]
-    int divider = 2;
+    int divider = 1;
+    
     [SerializeField, Range(1,100)]
-    float stepAmount = 1f;
+    float stepAmount = 2f;
 
 
     // Start is called before the first frame update
@@ -32,16 +33,17 @@ public class Graph : MonoBehaviour
     }
 
     // Update is called once per frame
-    async void Update()
+    void Update()
     {
         
         FunctionLibrary.Function f = FunctionLibrary.GetFunction(function);
+        
         float time = Time.time;
         float step = stepAmount / resolution;
         int depthRest = resolution / divider;
 
-        // float v = 0.5f * step - 1f;
-        float v = 0.1f * step - 1f;
+        float v = 0.5f * step - 1f;
+        
     
         for (int i = 0, x = 0, z = 0; i < points.Length; i++, x++) 
         {
@@ -68,22 +70,20 @@ public class Graph : MonoBehaviour
             // reapply the change to the point
             // point.localPosition = position;
         }
-            
-            
-            
-           
+    
         
     }
 
-    async void Awake()
+    void Awake()
     {
+    
         float step = stepAmount / resolution;
         // var position = Vector3.zero;
         var scale = Vector3.one * step;
-        
 
         //! assign length of points in Transform array based on resolution
         points = new Transform[resolution * resolution];
+
         // instead of i < resolution
         for (int i = 0; i < points.Length; i++)
         {
