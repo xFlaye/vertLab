@@ -1,110 +1,106 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Graph : MonoBehaviour
-{
-    [SerializeField]
-    Transform pointPrefab;
+public class Graph : MonoBehaviour {
 
-    [SerializeField, Range(10,100)]
-    int resolution = 30;
+	[SerializeField]
+	Transform pointPrefab;
 
-    //[SerializeField, Range(0,3)]
-    //int function;
+	[SerializeField, Range(10, 200)]
+	int resolution = 10;
 
-    [SerializeField]
-    FunctionLibrary.FunctionName function;
+	[SerializeField]
+	FunctionLibrary.FunctionName function;
 
-    Transform[] points;
-    
-    // public int power = 2;
-    [SerializeField, Range(1,100)]
-    int divider = 1;
-    
-    [SerializeField, Range(1,100)]
-    float stepAmount = 2f;
+	public enum TransitionMode { Cycle, Random }
 
+	[SerializeField]
+	TransitionMode transitionMode;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	[SerializeField, Min(0f)]
+	float functionDuration = 1f, transitionDuration = 1f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-        FunctionLibrary.Function f = FunctionLibrary.GetFunction(function);
-        
-        float time = Time.time;
-        float step = stepAmount / resolution;
-        int depthRest = resolution / divider;
+	Transform[] points;
 
-        float v = 0.5f * step - 1f;
-        
-    
-        for (int i = 0, x = 0, z = 0; i < points.Length; i++, x++) 
-        {
-            if (x == depthRest) {
-                x = 0;
-                z += 1;
-                v = (z + 0.5f) * step - 1f;
-            }
-            float u = (x + 0.5f) * step - 1f;
-            points[i].localPosition = f(u, v, time);
+	float duration;
 
-                // Transform point = points[i];
-            // Vector3 position = point.localPosition;
-            // //! Call using the FunctionLibrary classes and function using delegates
-            // position.y = f(position.x, position.z, time);
+	bool transitioning;
 
-            // //! Y-axis options
-            // change the shape of the parabola 
-            // position.y = Mathf.Pow(position.x,power); 
+	FunctionLibrary.FunctionName transitionFunction;
 
-            // //? use a sine wave (updated with a function)
-            //position.y = Mathf.Sin(Mathf.PI * (position.x + time));
-            
-            // reapply the change to the point
-            // point.localPosition = position;
-        }
-    
-        
-    }
+	void Awake () {
+		float step = 2f / resolution;
+		var scale = Vector3.one * step;
+		points = new Transform[resolution * resolution];
+		for (int i = 0; i < points.Length; i++) {
+			Transform point = points[i] = Instantiate(pointPrefab);
+			point.localScale = scale;
+			point.SetParent(transform, false);
+		}
+	}
 
-    void Awake()
-    {
-    
-        float step = stepAmount / resolution;
-        // var position = Vector3.zero;
-        var scale = Vector3.one * step;
+	void Update () {
+		duration += Time.deltaTime;
+		if (transitioning) {
+			if (duration >= transitionDuration) {
+				duration -= transitionDuration;
+				transitioning = false;
+			}
+		}
+		else if (duration >= functionDuration) {
+			duration -= functionDuration;
+			transitioning = true;
+			transitionFunction = function;
+			PickNextFunction();
+		}
 
-        //! assign length of points in Transform array based on resolution
-        points = new Transform[resolution * resolution];
+		if (transitioning) {
+			UpdateFunctionTransition();
+		}
+		else {
+			UpdateFunction();
+		}
+	}
 
-        // instead of i < resolution
-        for (int i = 0; i < points.Length; i++)
-        {
-            // grab the prefab from the gameobject and instantiate it
-            // Transform point = Instantiate(pointPrefab);
-            // points[i] = point;
+	void PickNextFunction () {
+		function = transitionMode == TransitionMode.Cycle ?
+			FunctionLibrary.GetNextFunctionName(function) :
+			FunctionLibrary.GetRandomFunctionNameOtherThan(function);
+	}
 
-            //! OR
+	void UpdateFunction () {
+		FunctionLibrary.Function f = FunctionLibrary.GetFunction(function);
+		float time = Time.time;
+		float step = 2f / resolution;
+		float v = 0.5f * step - 1f;
+		for (int i = 0, x = 0, z = 0; i < points.Length; i++, x++) {
+			if (x == resolution) {
+				x = 0;
+				z += 1;
+				v = (z + 0.5f) * step - 1f;
+			}
+			float u = (x + 0.5f) * step - 1f;
+			points[i].localPosition = f(u, v, time);
+		}
+	}
 
-            Transform point = points[i] = Instantiate(pointPrefab);
-
-            // set X axis (align it so it's balanced along origin)
-            // position.x = (x + 0.5f) * step - 1f;
-            // position.z = (z + 0.5f) * step - 1f;
-            
-            // point.localPosition = position;
-            point.localScale = scale;
-
-            // parent to gameObject
-            point.SetParent(transform, false);
-        }
-        
-    }
+	void UpdateFunctionTransition () {
+		FunctionLibrary.Function
+			from = FunctionLibrary.GetFunction(transitionFunction),
+			to = FunctionLibrary.GetFunction(function);
+		float progress = duration / transitionDuration;
+		float time = Time.time;
+		float step = 2f / resolution;
+		float v = 0.5f * step - 1f;
+		for (int i = 0, x = 0, z = 0; i < points.Length; i++, x++) {
+			if (x == resolution) {
+				x = 0;
+				z += 1;
+				v = (z + 0.5f) * step - 1f;
+			}
+			float u = (x + 0.5f) * step - 1f;
+			points[i].localPosition = FunctionLibrary.Morph(
+				u, v, time, from, to, progress
+			);
+		}
+	}
 }
