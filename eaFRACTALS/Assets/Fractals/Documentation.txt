@@ -1,0 +1,23 @@
+
+[This Asset is a sample project for learning pruposes]
+
+To properly import this Asset into a project:
+
+1- Import text mesh pro in the package manager window
+
+2- Read the scripts if you want to add fractals into a new scene, the scripts have comments, so it will be easier to understand the code
+
+
+You can find information about the fractals in the internet, the cantor set is one of the easiest of this Asset, it only needs to change the size of the 2 resultant lines
+
+--Koch fractal: This fractal is created by spawning triangles in the 3 sides of the first triangle.
+
+The first iteration spawns a triangle in the middle. 
+
+The second iteration does the same in the free space at the sides of the first triangle,
+
+that is how I made work the Koch fractal.
+
+--Vicsek fractal: Spawns all the content of the fractal in 4 positions, up, down, right and left.
+
+The first iteration only duplicates the cross, in the rest of iterations, it spawns the result of the last iteration.

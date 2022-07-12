@@ -11,7 +11,7 @@ public class Graph : MonoBehaviour {
 	[SerializeField]
 	FunctionLibrary.FunctionName function;
 
-	public enum TransitionMode { Cycle, Random }
+	public enum TransitionMode { None, Cycle, Random }
 
 	[SerializeField]
 	TransitionMode transitionMode;
@@ -49,8 +49,9 @@ public class Graph : MonoBehaviour {
 		else if (duration >= functionDuration) {
 			duration -= functionDuration;
 			transitioning = true;
+			// transitioning = true;
 			transitionFunction = function;
-			PickNextFunction();
+			//PickNextFunction();
 		}
 
 		if (transitioning) {
